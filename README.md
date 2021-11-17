@@ -1,6 +1,6 @@
-# test_one
+# GUI Rough Draft
 
-A new Flutter project.
+A new Flutter project that layouts the game logic and GUI
 
 ## Getting Started
 
