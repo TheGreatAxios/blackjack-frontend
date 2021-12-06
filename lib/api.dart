@@ -13,8 +13,11 @@ class Api {
   final BehaviorSubject wsSubject = BehaviorSubject();
   Stream<dynamic> get wsStream => wsSubject.stream;
 
-  void createUser(String _userName) {
+  void addSocketStream() {
     wsSubject.addStream(ws.stream);
+  }
+
+  void createUser(String _userName) {
     ws.sink.add(jsonEncode({"action": "NEW_USER", "roomId": "0", "userName": _userName}));
   }
 

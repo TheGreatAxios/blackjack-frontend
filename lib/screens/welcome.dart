@@ -23,6 +23,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
 
   @override
   void initState() {
+    _api.addSocketStream();
     _api.wsStream.listen((dynamic e) {
       Map<String, dynamic> event = Map.from(jsonDecode(e));
       print(event['action']);
