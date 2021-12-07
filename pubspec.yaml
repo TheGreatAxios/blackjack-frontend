@@ -68,7 +68,7 @@ flutter:
   uses-material-design: true
   assets:
 
-
+    - assets/Cards/
     - assets/images/
     - assets/c/2_of_clubs.png
     - assets/c/2_of_diamonds.png
