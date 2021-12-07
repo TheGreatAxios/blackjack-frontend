@@ -47,24 +47,46 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
   Widget build(BuildContext context) {
     if (page == 'Welcome') {
       return Scaffold(
-        body: SizedBox(
+        body: Container(
             height: MediaQuery.of(context).size.height,
             width: MediaQuery.of(context).size.width,
-            child: Column(
+            child: Stack(
                 children: <Widget>[
-                  TextField(
+                  Center(
+
+                    child: Image.asset('assets/pictures/leopardHome.jpg',
+                    ),
+                  ),
+
+                 Positioned(
+                   top: 600,
+                 left: 540,
+                 child: Container(
+                   width: 200,
+                   height: 50,
+                  child: TextField(
                     controller: _controller,
                     decoration: InputDecoration(
+                        border: OutlineInputBorder(),
                         labelText: "Username"
                     ),
                   ),
-                  ElevatedButton(
+                  ),
+                 //),
+                 ),
+                   Positioned(
+                      top: 650,
+                  left: 590,
+                  child: ElevatedButton(
                     child: const Text("Join Table"),
                     onPressed: () {
                       _api.createUser(_controller.value.text);
                     },
-                  )
-                ]
+                  ),
+                 // ),
+                  ),
+                ],
+             // mainAxisAlignment: MainAxisAlignment.center,
             )
         )
       );
