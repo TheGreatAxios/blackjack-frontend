@@ -24,4 +24,16 @@ class Api {
   void connectUser(String _id, String _playerId) {
     ws.sink.add(jsonEncode({"action": "CONNECT", "roomId": _id, "data": {"playerId": _playerId}}));
   }
+
+  void startGame(String _id) {
+    ws.sink.add(jsonEncode({ "action": "START_GAME", "roomId": _id }));
+  }
+
+  void placeBet(String _id, String _playerId, int _bet) {
+    ws.sink.add(jsonEncode({ "action": "USER_BET", "roomId": _id, "playerId": _playerId, "betAmount": _bet }));
+  }
+
+  void userHit(String _id, String _playerId) {
+    ws.sink.add(jsonEncode({"action": "USER_HIT", "roomId": _id, "playerId": _playerId }));
+  }
 }

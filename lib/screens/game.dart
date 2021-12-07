@@ -17,16 +17,16 @@ class AwesomeButtonState extends State<AwesomeButton> {
 
   @override
   void initState() {
-    _api.wsStream.listen((dynamic e) {
+    _api.wsStream.asBroadcastStream().listen((dynamic e) {
       Map<String, dynamic> event = Map.from(jsonDecode(e));
       // print(event['action']);
       // print(event['action'].runtimeType);
       // print("Event: ${event}");
       // if (event['action'].toString() == 'USER_ADD_LOCAL') {
       //   final Player _player = Player.fromJson(event['player']);
-      //   final GameTable _table = GameTable.fromJson(event['table']);
+        final GameTable _table = GameTable.fromJson(event['table']);
       //   _gameState.playerSubject.sink.add(_player);
-      //   _gameState.tableSubject.sink.add(_table);
+        _state.tableSubject.sink.add(_table);
       //   _api.connectUser(_table.id.toString(), _player.id.toString());
       //   setState(() {
       //     page = 'Game';
@@ -370,40 +370,41 @@ class AwesomeButtonState extends State<AwesomeButton> {
     });
   }
   onDeal() {
-    setState(() {
-
-
-      //sumOfCard(100);
-      if(startClick) {
-        dealClick = true;
-
-        dealerButtonX = 1000;
-        dealerButtonY = 1000;
-
-        firstCardX = firstCardX - 550;
-        firstCardY = firstCardY / 100 + 50;
-
-        firstDealerCardX = firstDealerCardX - 550;
-        firstDealerCardY = firstDealerCardY / 100 + 50;
-        if (sumOfCard(100) == 21) {
-          resultX = 450;
-          resultY = 150;//maybe put this in methods onWin and onLose
-          result = 'Jolly G you got 21! You win';
-          bet = (bet * 2.5);
-          userCoins = userCoins + bet;
-          reDealButton();
-        }
-        if (AddSumOfAICard(100) == 21) {
-          resultX = 450;
-          resultY = 150;
-          result = 'Jolly G the dealer got 21! You lose';
-          userCoins = userCoins - bet;
-          backOfCard = playingCards[AICard1];
-          reDealButton();
-        }
-      }
-      userBroke();
-    });
+    // _api.deal();
+    // setState(() {
+    //
+    //
+    //   //sumOfCard(100);
+    //   if(startClick) {
+    //     dealClick = true;
+    //
+    //     dealerButtonX = 1000;
+    //     dealerButtonY = 1000;
+    //
+    //     firstCardX = firstCardX - 550;
+    //     firstCardY = firstCardY / 100 + 50;
+    //
+    //     firstDealerCardX = firstDealerCardX - 550;
+    //     firstDealerCardY = firstDealerCardY / 100 + 50;
+    //     if (sumOfCard(100) == 21) {
+    //       resultX = 450;
+    //       resultY = 150;//maybe put this in methods onWin and onLose
+    //       result = 'Jolly G you got 21! You win';
+    //       bet = (bet * 2.5);
+    //       userCoins = userCoins + bet;
+    //       reDealButton();
+    //     }
+    //     if (AddSumOfAICard(100) == 21) {
+    //       resultX = 450;
+    //       resultY = 150;
+    //       result = 'Jolly G the dealer got 21! You lose';
+    //       userCoins = userCoins - bet;
+    //       backOfCard = playingCards[AICard1];
+    //       reDealButton();
+    //     }
+    //   }
+    //   userBroke();
+    // });
   }
   restartGame() {
     setState(() {
@@ -495,6 +496,33 @@ class AwesomeButtonState extends State<AwesomeButton> {
     super.initState();
   }
 */
+
+  int _getCardSum(List<String> cards) {
+    int res = 0;
+    bool containsAce = false;
+    cards.forEach((String element) {
+      String val = element[0];
+      List<String> _faces = ['K', 'Q', 'J'];
+      if (_faces.contains(val)) {
+        res += 10;
+      } else if (val == 'A') {
+        containsAce = true;
+        res += 11;
+        if (res > 21) {
+          res -= 10;
+        }
+      } else {
+        res += int.parse(val);
+        if (containsAce && res > 21) {
+          res -= 10;
+        }
+      }
+    });
+
+
+    return res;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -513,30 +541,46 @@ class AwesomeButtonState extends State<AwesomeButton> {
               if (snapshot.hasData) {
 
                 GameTable _table = snapshot.data!;
-
+                print("Timer: ${_table.timer}");
                 return Stack(
                   children: <Widget>[
 
-
+                  if (_table.timer != 0) Positioned(
+                      top: 50,
+                      right: 50,
+                      child: Text(
+                        '${_table.timer / 1000}',
+                        style: TextStyle(
+                          color: Colors.white
+                        )
+                      )
+                  ),
+                    if (_table.timer == 0) Positioned(
+                      top: 50,
+                      right: 50,
+                      child: Text(
+                        _table.currentHand.status != -1 ? 'Player ${_table.currentHand.status}\'s turn' : 'Dealer\'s Turn'
+                      )
+                    ),
 // IF YOU LOSE AND HOW MUCH YOU LOST
-                    Container(
-                      height: 10000,
-                      width: 10000,
-                      color: Colors.black,
-
-                    ),
-                    Positioned(
-                      child: Center(
-                        child: Image.asset('assets/pictures/leopardHome.jpg',
-                        ),
-                      ),
-                    ),
-                    Positioned(
-                        right: resultX,
-                        top:  resultY,
-                        child: Text('${result}',
-                          style: TextStyle(fontSize: 50),)
-                    ),
+//                     Container(
+//                       height: 10000,
+//                       width: 10000,
+//                       color: Colors.black,
+//
+//                     ),
+                    // Positioned(
+                    //   child: Center(
+                    //     child: Image.asset('assets/pictures/leopardHome.jpg',
+                    //     ),
+                    //   ),
+                    // ),
+                    // Positioned(
+                    //     right: resultX,
+                    //     top:  resultY,
+                    //     child: Text('${result}',
+                    //       style: TextStyle(fontSize: 50),)
+                    // ),
 
                     //DISPLAY THE USER COINS ON SCREEN
 
@@ -549,86 +593,130 @@ class AwesomeButtonState extends State<AwesomeButton> {
 
 
                     //WHAT HAPPENS IF YOU WIN AND HOW MUCH YOU GAIN
-
-
-//DIPLAYING CARDS TO THE USER
+                    // DIPLAYING CARDS TO THE USER
                     //Displays the first two cards for the player
+                    Positioned(
+                      bottom: 50,
+                      child: Center(
+                        child: Container(
+                          width: 500,
+                          height: 300,
+                          child: ListView.builder(
+                              physics: NeverScrollableScrollPhysics(),
+                              scrollDirection: Axis.horizontal,
+                              itemCount: snapshot.data?.currentHand.players[0].cards.length,
+                              itemBuilder: (BuildContext ctx, int index) {
+                                return Container(
+                                    child: Image.asset('assets/Cards/${snapshot.data?.currentHand.players[0].cards[index]}.png')
+                                );
 
-                    Positioned(
-                      left: firstCardX,
-                      bottom: firstCardY,
-                      //child: _card.asset,
-                      child: Image.asset(playingCards[card1]),
-                      height: 100,
+                              }
+                          ),
+                        )
+                      )
                     ),
-
-                    //Displays the second card that the player is orinally given
-                    Positioned(
-                      left: firstCardX + 20,
-                      bottom: firstCardY,
-                      child: Image.asset(playingCards[card2]),
-                      height: 100,
-                    ),
-                    //image when the user presses hit for the first t
-                    Positioned(
-                      left: secondCardX + 40,
-                      bottom: secondCardY,
-                      child: Image.asset(playingCards[card3]),
-                      height: 100,
-                    ),
-
-                    Positioned(
-                      left: thirdCardX + 60,
-                      bottom: thirdCardY,
-                      child: Image.asset(playingCards[card4]),
-                      height: 100,
-                    ),
+                    // Positioned(
+                    //   left: firstCardX,
+                    //   bottom: firstCardY,
+                    //   //child: _card.asset,
+                    //   child: Image.asset(playingCards[card1]),
+                    //   height: 100,
+                    // ),
+                    //
+                    // //Displays the second card that the player is orinally given
+                    // Positioned(
+                    //   left: firstCardX + 20,
+                    //   bottom: firstCardY,
+                    //   child: Image.asset(playingCards[card2]),
+                    //   height: 100,
+                    // ),
+                    // //image when the user presses hit for the first t
+                    // Positioned(
+                    //   left: secondCardX + 40,
+                    //   bottom: secondCardY,
+                    //   child: Image.asset(playingCards[card3]),
+                    //   height: 100,
+                    // ),
+                    //
+                    // Positioned(
+                    //   left: thirdCardX + 60,
+                    //   bottom: thirdCardY,
+                    //   child: Image.asset(playingCards[card4]),
+                    //   height: 100,
+                    // ),
 
 
                     Positioned(
                         right: 720,
                         bottom: 50,
-                        child: Text("Your total is: ${sumOfCards}")
+                        child: Text("Your total is: ${_getCardSum(_table.currentHand.players[0].cards)}")
                     ),
-
-
-//AI CARDS
-
+                    //AI CARDS
                     //AI FIRST CARDs
                     Positioned(
-                      left: firstDealerCardX,
-                      top: firstDealerCardY,
-                      child: Image.asset(backOfCard),
-                      height: 100,
+                      top: 50,
+                      child: Container(
+                        height: 300,
+                        width: 500,
+                        child: ListView.builder(
+                            physics: NeverScrollableScrollPhysics(),
+                            scrollDirection: Axis.horizontal,
+                            itemCount: snapshot.data?.currentHand.dealer.length,
+                            itemBuilder: (BuildContext ctx, int index) {
+                              if (index == 0) {
+                                return Container(
+                                    child: Image.asset(
+                                        'assets/Cards/card_back.png',
+                                        height: 50,
+                                        width: 250
+                                    )
+                                );
+                              }
+                              return Container(
+                                  child: Image.asset(
+                                    'assets/Cards/${snapshot.data?.currentHand.dealer[index]}.png',
+                                    height: 25,
+                                    width: 150,
+                                  )
+                              );
+                            }
+                        ),
+                      ),
                     ),
-                    Positioned(
-                      left: firstDealerCardX + 20,
-                      top: firstDealerCardY,
-                      child: Image.asset(playingCards[AICard2]),
-                      height: 100,
-                    ),
-                    Positioned(
-                      left: secondDealerCardX + 40,
-                      top: secondDealerCardY,
-                      child: Image.asset(playingCards[AICard3]),
-                      height: 100,
-                    ),
-                    Positioned(
-                      left: thirdDealerCardX + 60,
-                      top: thirdDealerCardY,
-                      child: Image.asset(playingCards[AICard4]),
-                      height: 100,
-                    ),
-                    Positioned(
-                      left: fourthDealerCardX + 80,
-                      top: fourthDealerCardY,
-                      //  child: Visibility(
-                      child: Image.asset(playingCards[AICard5]),
-                      // replacement: Container(),
-                      // visible: _fourthDealerCardVisibility,
-                      //   ),
-                      height: 100,
-                    ),
+                    // Positioned(
+                    //   left: firstDealerCardX,
+                    //   top: firstDealerCardY,
+                    //   child: Image.asset(backOfCard),
+                    //   height: 100,
+                    // ),
+                    // Positioned(
+                    //   left: firstDealerCardX + 20,
+                    //   top: firstDealerCardY,
+                    //   child: Image.asset(playingCards[AICard2]),
+                    //   height: 100,
+                    // ),
+                    // Positioned(
+                    //   left: secondDealerCardX + 40,
+                    //   top: secondDealerCardY,
+                    //   child: Image.asset(playingCards[AICard3]),
+                    //   height: 100,
+                    // ),
+                    // Positioned(
+                    //   left: thirdDealerCardX + 60,
+                    //   top: thirdDealerCardY,
+                    //   child: Image.asset(playingCards[AICard4]),
+                    //   height: 100,
+                    // ),
+                    // Positioned(
+                    //   left: fourthDealerCardX + 80,
+                    //   top: fourthDealerCardY,
+                    //   //  child: Visibility(
+                    //   child: Image.asset(playingCards[AICard5]),
+                    //   // replacement: Container(),
+                    //   // visible: _fourthDealerCardVisibility,
+                    //   //   ),
+                    //   height: 100,
+                    // ),
 
 
 //BUTTON IF HIT
@@ -639,7 +727,11 @@ class AwesomeButtonState extends State<AwesomeButton> {
                         width: 100,
                         height: 50,
 
-                        child: RaisedButton(onPressed: onHit,
+                        child: ElevatedButton(
+                            // onPressed: onHit,
+                            onPressed: () {
+                              _api.userHit(_table.id.toString(), '0');
+                            },
                             child: Text("Hit")
                         ),
                       ),
@@ -663,8 +755,12 @@ class AwesomeButtonState extends State<AwesomeButton> {
                       child: Container(
                         width: 100,
                         height: 50,
-                        child: RaisedButton(onPressed: onDeal,
-                            child: Text("Deal")
+                        child: ElevatedButton(
+                            // onPressed: onDeal,
+                            onPressed: () {
+                              _api.startGame(_table.id.toString());
+                            },
+                            child: const Text('Deal')
                         ),
                       ),
                     ),
@@ -683,7 +779,8 @@ class AwesomeButtonState extends State<AwesomeButton> {
                     ),
 //BETTING
                     //INPUT BETTING BOX
-                    Positioned(
+
+                    if (_state.playerSubject.value.id == _table.players[_table.currentHand.status].id) Positioned(
                       left: 300,
                       top: 200,
                       child: Container(
@@ -700,16 +797,17 @@ class AwesomeButtonState extends State<AwesomeButton> {
                           ),
 
                           onChanged: (input) {
-                            setState(() {
-                              startClick = true;
-                              bet = double.parse(input);
-                            });
+                            _api.placeBet(_table.id.toString(), '0', int.parse(input));
+                            // setState(() {
+                            //   startClick = true;
+                            //   bet = double.parse(input);
+                            // });
                           },
                         ),
                       ),
                     ),
                     //DISPLAYING WHAT HAS BEEN BET
-                    Positioned(
+                    if (_state.playerSubject.value.id == _table.players[_table.currentHand.status].id) Positioned(
                       left: 300,
                       top: 250,
                       child: Text('${bet}'),
