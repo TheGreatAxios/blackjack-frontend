@@ -9,7 +9,7 @@ class Api {
   static const baseUrl = 'http://localhost:8080';
   static const wsUrl = 'ws://localhost:8080';
 
-  final WebSocketChannel ws = WebSocketChannel.connect(Uri.parse('ws://localhost:8080'));
+  final WebSocketChannel ws = WebSocketChannel.connect(Uri.parse('ws://10.0.2.2:8080'));
   final BehaviorSubject wsSubject = BehaviorSubject();
   Stream<dynamic> get wsStream => wsSubject.stream;
 
@@ -35,5 +35,8 @@ class Api {
 
   void userHit(String _id, String _playerId) {
     ws.sink.add(jsonEncode({"action": "USER_HIT", "roomId": _id, "playerId": _playerId }));
+  }
+  void userStay(String _id, String _playerId) {
+    ws.sink.add(jsonEncode({"action": "USER_STAY", "roomId": _id, "playerId": _playerId }));
   }
 }

@@ -61,8 +61,11 @@ class AwesomeButtonState extends State<AwesomeButton> {
   double playAgainButtonY = 1000;
 
   double titleScreenH = 10000;
-  double playButtonX = 740;
-  double playButtonY =400;
+  double playButtonX = 600;
+  double playButtonY =600;
+
+  double titleScreenTextX = 450;
+  double titleScreenTextY = 100;
 
   double restartX = 2000;
   double restartY = 2000;
@@ -582,13 +585,22 @@ class AwesomeButtonState extends State<AwesomeButton> {
                     //       style: TextStyle(fontSize: 50),)
                     // ),
 
-                    //DISPLAY THE USER COINS ON SCREEN
+                    //background color
 
+
+                    Container(
+                      decoration: BoxDecoration(
+                        color:Colors.green,
+                      ),
+                    ),
+
+
+//USER COINS IS RIGHT HRERE DSADADSASDAD
                     Positioned(
-                        right: 200,
-                        top: 350,
+                        right: 50,
+                        top: 20,
                         child: Text('You have: ${userCoins} coins',
-                          style: TextStyle(fontSize: 25),)
+                          style: TextStyle(fontSize: 30),)
                     ),
 
 
@@ -597,17 +609,20 @@ class AwesomeButtonState extends State<AwesomeButton> {
                     //Displays the first two cards for the player
                     Positioned(
                       bottom: 50,
+                      left: 50,
                       child: Center(
                         child: Container(
-                          width: 500,
-                          height: 300,
+                          width: 900,
+                          height: 210,
                           child: ListView.builder(
                               physics: NeverScrollableScrollPhysics(),
                               scrollDirection: Axis.horizontal,
                               itemCount: snapshot.data?.currentHand.players[0].cards.length,
                               itemBuilder: (BuildContext ctx, int index) {
                                 return Container(
-                                    child: Image.asset('assets/Cards/${snapshot.data?.currentHand.players[0].cards[index]}.png')
+
+                                    child: Image.asset('assets/Cards/${snapshot.data?.currentHand.players[0].cards[index]}.png'),
+
                                 );
 
                               }
@@ -647,17 +662,17 @@ class AwesomeButtonState extends State<AwesomeButton> {
 
 
                     Positioned(
-                        right: 720,
-                        bottom: 50,
-                        child: Text("Your total is: ${_getCardSum(_table.currentHand.players[0].cards)}")
+                        right: 500,
+                        top: 20,
+                        child: Text("Your total is: ${_getCardSum(_table.currentHand.players[0].cards)}", style: TextStyle(fontSize: 40))
                     ),
                     //AI CARDS
                     //AI FIRST CARDs
                     Positioned(
-                      top: 50,
+                      top: 60,
                       child: Container(
-                        height: 300,
-                        width: 500,
+                        height: 210,
+                        width: 700,
                         child: ListView.builder(
                             physics: NeverScrollableScrollPhysics(),
                             scrollDirection: Axis.horizontal,
@@ -667,15 +682,15 @@ class AwesomeButtonState extends State<AwesomeButton> {
                                 return Container(
                                     child: Image.asset(
                                         'assets/Cards/card_back.png',
-                                        height: 50,
-                                        width: 250
+                                        height: 100,
+                                        width: 250,
                                     )
                                 );
                               }
                               return Container(
                                   child: Image.asset(
                                     'assets/Cards/${snapshot.data?.currentHand.dealer[index]}.png',
-                                    height: 25,
+                                    height: 100,
                                     width: 150,
                                   )
                               );
@@ -719,14 +734,25 @@ class AwesomeButtonState extends State<AwesomeButton> {
                     // ),
 
 
+                    //
+                    //
+                    //need to make this change based on what the sum is compared to GUIs sum
+                    Align(
+                      alignment: Alignment.center,
+                      child: Container(
+                        //if(blah blah) then you busted and then create if statments for all three cases
+                        child: Text("You Busted!", style: TextStyle(fontSize: 40),)
+                      ),
+                    ),
+
+
 //BUTTON IF HIT
                     Positioned(
-                      right: 250,
-                      bottom: 75,
+                      right: 50,
+                      bottom: 225,
                       child: Container(
-                        width: 100,
-                        height: 50,
-
+                        width: 300,
+                        height: 150,
                         child: ElevatedButton(
                             // onPressed: onHit,
                             onPressed: () {
@@ -738,25 +764,32 @@ class AwesomeButtonState extends State<AwesomeButton> {
                     ),
                     //BUTTON IF STAY
                     Positioned(
-                      left: 250,
-                      bottom: 75,
+                      right: 50,
+                      bottom: 50,
                       child: Container(
-                        width: 100,
-                        height: 50,
-                        child: RaisedButton(onPressed: onStay,
+                        width: 300,
+                        height: 150,
+                        color: Colors.blue,
+                        child: RaisedButton(onPressed: (){
+                          _api.userStay(_table.id.toString(), '0');
+                        },
                             child: Text("Stay")
                         ),
                       ),
                     ),
                     //BUTTON IF DEAL
                     Positioned(
-                      left: dealerButtonX,
-                      top: dealerButtonY,
+                      // left: dealerButtonX,
+                      // top: dealerButtonY,
+                      right: 50,
+                      bottom: 400,
                       child: Container(
-                        width: 100,
-                        height: 50,
+                        width: 300,
+                        height: 150,
+                        color: Colors.redAccent,
                         child: ElevatedButton(
                             // onPressed: onDeal,
+
                             onPressed: () {
                               _api.startGame(_table.id.toString());
                             },
@@ -780,9 +813,23 @@ class AwesomeButtonState extends State<AwesomeButton> {
 //BETTING
                     //INPUT BETTING BOX
 
+                    //
+                    //
+                    //include an if statment that checks if its the users turn
+             // if(//something that checks if its their turn or not)
+             //   Positioned(
+             //     right: 50,
+             //          top: 75,
+             //          child: Container(
+             //
+             //            child: Text("It is your turn", style:
+             //            TextStyle(fontSize: 20),),
+             //          ),
+             //        ),
+
                     if (_state.playerSubject.value.id == _table.players[_table.currentHand.status].id) Positioned(
-                      left: 300,
-                      top: 200,
+                      right: 50,
+                      top: 140,
                       child: Container(
                         width: 200,
                         height: 50,
@@ -808,8 +855,8 @@ class AwesomeButtonState extends State<AwesomeButton> {
                     ),
                     //DISPLAYING WHAT HAS BEEN BET
                     if (_state.playerSubject.value.id == _table.players[_table.currentHand.status].id) Positioned(
-                      left: 300,
-                      top: 250,
+                      right: 50,
+                      top: 125,
                       child: Text('${bet}'),
                     ),
 
@@ -841,6 +888,7 @@ class AwesomeButtonState extends State<AwesomeButton> {
                         height: titleScreenH,
                         width: titleScreenH,
                         color: Colors.black,
+                        child: Image.asset('assets/pictures/leopardHome.jpg'),
 
                         // child: Text('Welcome to Black Jack',
                         // style: TextStyle(fontSize: 50),
@@ -848,21 +896,29 @@ class AwesomeButtonState extends State<AwesomeButton> {
                       ),
                     ),
 
+                    Positioned(
+                      top: titleScreenTextY,
+                      left: titleScreenTextX,
+                      child: Text("A room has been joined",
+                          style: TextStyle(fontSize: 40),),
+                    ),
 
                     Positioned(
                       top: playButtonY,
                       right: playButtonX,
-                      child: RaisedButton(
-                        onPressed: () {
-                          setState(() {
+                        child: RaisedButton.icon(onPressed:()
+                            {
+                            setState(() {
                             titleScreenH = 0;
                             playButtonX = 1000;
                             playButtonY = 1000;
-
-                          });
-                        },
-                        child: Text("Play"),
-
+                            titleScreenTextY = 1000;
+                            titleScreenTextX = 1000;
+                            }
+                            );
+                            },
+                          icon: Icon(Icons.play_circle),
+                          label: Text("Play"),
 
                       ),
                     ),
