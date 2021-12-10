@@ -13,8 +13,10 @@ class GameState {
   static GameState get instance => _singleton;
 
   final BehaviorSubject<GameTable> tableSubject = BehaviorSubject<GameTable>();
-  final BehaviorSubject<Player> playerSubject = BehaviorSubject<Player>();
+  final BehaviorSubject<String> playerName = BehaviorSubject<String>();
 
   Stream<GameTable> get tableStream => tableSubject.stream;
+
+
 
 }

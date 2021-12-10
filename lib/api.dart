@@ -9,7 +9,7 @@ class Api {
   static const baseUrl = 'http://localhost:8080';
   static const wsUrl = 'ws://localhost:8080';
 
-  final WebSocketChannel ws = WebSocketChannel.connect(Uri.parse('ws://10.0.2.2:8080'));
+  final WebSocketChannel ws = WebSocketChannel.connect(Uri.parse('ws://localhost:8080'));
   final BehaviorSubject wsSubject = BehaviorSubject();
   Stream<dynamic> get wsStream => wsSubject.stream;
 
@@ -18,25 +18,25 @@ class Api {
   }
 
   void createUser(String _userName) {
-    ws.sink.add(jsonEncode({"action": "NEW_USER", "roomId": "0", "userName": _userName}));
+    ws.sink.add(jsonEncode({"action": "JOIN", "name": _userName}));
   }
 
-  void connectUser(String _id, String _playerId) {
-    ws.sink.add(jsonEncode({"action": "CONNECT", "roomId": _id, "data": {"playerId": _playerId}}));
-  }
-
-  void startGame(String _id) {
-    ws.sink.add(jsonEncode({ "action": "START_GAME", "roomId": _id }));
-  }
-
-  void placeBet(String _id, String _playerId, int _bet) {
-    ws.sink.add(jsonEncode({ "action": "USER_BET", "roomId": _id, "playerId": _playerId, "betAmount": _bet }));
-  }
-
-  void userHit(String _id, String _playerId) {
-    ws.sink.add(jsonEncode({"action": "USER_HIT", "roomId": _id, "playerId": _playerId }));
-  }
-  void userStay(String _id, String _playerId) {
-    ws.sink.add(jsonEncode({"action": "USER_STAY", "roomId": _id, "playerId": _playerId }));
-  }
+  // void connectUser(String _id, String _playerId) {
+  //   ws.sink.add(jsonEncode({"action": "CONNECT", "roomId": _id, "data": {"playerId": _playerId}}));
+  // }
+  //
+  // void startGame(String _id) {
+  //   ws.sink.add(jsonEncode({ "action": "START_GAME", "roomId": _id }));
+  // }
+  //
+  // void placeBet(String _id, String _playerId, int _bet) {
+  //   ws.sink.add(jsonEncode({ "action": "USER_BET", "roomId": _id, "playerId": _playerId, "betAmount": _bet }));
+  // }
+  //
+  // void userHit(String _id, String _playerId) {
+  //   ws.sink.add(jsonEncode({"action": "USER_HIT", "roomId": _id, "playerId": _playerId }));
+  // }
+  // void userStay(String _id, String _playerId) {
+  //   ws.sink.add(jsonEncode({"action": "USER_STAY", "roomId": _id, "playerId": _playerId }));
+  // }
 }
